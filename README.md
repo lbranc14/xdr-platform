@@ -23,6 +23,7 @@
 - [Déploiement Kubernetes](#-déploiement-kubernetes)
 - [Configuration](#️-configuration)
 - [API Documentation](#-api-documentation)
+- [Screenshots](#-screenshots)
 - [Métriques & Performance](#-métriques--performance)
 - [Problématiques Résolues](#-problématiques-résolues)
 - [Roadmap](#-roadmap)
@@ -404,6 +405,20 @@ Données timeline dernières 24h.
 #### `GET /health`
 
 Health check Kubernetes.
+
+---
+
+## 📸 Screenshots
+
+### Dashboard avec Filtres
+![Dashboard with Filters](docs/images/dashboard-filters.png)
+
+*Vue principale avec cartes statistiques, timeline interactive et panneau de filtres (Time Range, Event Type, Severity, Hostname)*
+
+### Tableaux de Bord Détaillés
+![Dashboard Details](docs/images/dashboard-full.png)
+
+*Graphiques de distribution par type et sévérité + tableau des événements récents avec tags*
 
 ---
 
