@@ -411,12 +411,12 @@ Health check Kubernetes.
 ## 📸 Screenshots
 
 ### Dashboard avec Filtres
-![Dashboard with Filters](docs/images/dashboard-filters.png)
+![Dashboard with Filters](docs/images/dashboard_&_filters.png)
 
 *Vue principale avec cartes statistiques, timeline interactive et panneau de filtres (Time Range, Event Type, Severity, Hostname)*
 
 ### Tableaux de Bord Détaillés
-![Dashboard Details](docs/images/dashboard-full.png)
+![Dashboard Details](docs/images/dashboard_2.png)
 
 *Graphiques de distribution par type et sévérité + tableau des événements récents avec tags*
 
@@ -520,9 +520,9 @@ Ce projet est sous licence **MIT License**. Voir [LICENSE](LICENSE).
 **Louis BRANCHUT**
 
 - 🌐 Demo : [https://xdr-platform.duckdns.org](https://xdr-platform.duckdns.org)
-- 💼 LinkedIn : [votre-profil-linkedin](https://www.linkedin.com/in/votre-profil)
-- 📧 Email : votre.email@example.com
-- 🐙 GitHub : [@votre-username](https://github.com/votre-username)
+- 💼 LinkedIn : [louis-branchut](https://www.linkedin.com/in/louis-branchut-898553212/)
+- 📧 Email : louis.branchut@gmail.com
+- 🐙 GitHub : [lbranc14](https://github.com/lbranc14)
 
 ---
 
