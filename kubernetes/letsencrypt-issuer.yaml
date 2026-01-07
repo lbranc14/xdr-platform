@@ -1,0 +1,21 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    # Serveur Let's Encrypt production
+    server: https://acme-v02.api.letsencrypt.org/directory
+    
+    # Email pour les notifications de renouvellement
+    email: louis.branchut@gmail.com  # ← CHANGEZ CECI
+    
+    # Clé privée pour le compte ACME
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    
+    # Solver HTTP-01 (validation par HTTP)
+    solvers:
+    - http01:
+        ingress:
+          class: nginx

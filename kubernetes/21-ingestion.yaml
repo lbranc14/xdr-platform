@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xdr-ingestion
+  namespace: xdr-platform
+  labels:
+    app: xdr-ingestion
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: xdr-ingestion
+  template:
+    metadata:
+      labels:
+        app: xdr-ingestion
+    spec:
+      containers:
+      - name: ingestion
+        image: docker.io/lbranc14/xdr-ingestion:latest  # À remplacer
+        env:
+        - name: DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: xdr-config
+              key: DATABASE_HOST
+        - name: DATABASE_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: xdr-config
+              key: DATABASE_PORT
+        - name: DATABASE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: xdr-config
+              key: DATABASE_NAME
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: xdr-secrets
+              key: DATABASE_USER
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: xdr-secrets
+              key: DATABASE_PASSWORD
+        - name: KAFKA_BROKERS
+          valueFrom:
+            configMapKeyRef:
+              name: xdr-config
+              key: KAFKA_BROKERS
+        - name: KAFKA_TOPIC_RAW_EVENTS
+          valueFrom:
+            configMapKeyRef:
+              name: xdr-config
+              key: KAFKA_TOPIC_RAW_EVENTS
+        - name: KAFKA_GROUP_ID
+          valueFrom:
+            configMapKeyRef:
+              name: xdr-config
+              key: KAFKA_GROUP_ID
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"

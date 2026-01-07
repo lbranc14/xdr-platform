@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: xdr-platform
+  labels:
+    name: xdr-platform
+    environment: production

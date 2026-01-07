@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: xdr-config
+  namespace: xdr-platform
+data:
+  # Database Configuration
+  DATABASE_HOST: "timescaledb-service"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: "xdr_events"
+  
+  # Kafka Configuration
+  KAFKA_BROKERS: "kafka-service:9092"
+  KAFKA_TOPIC_RAW_EVENTS: "raw-events"
+  KAFKA_GROUP_ID: "xdr-ingestion-service"
+  
+  # Agent Configuration
+  COLLECTION_INTERVAL: "30s"
+  
+  # API Configuration
+  API_PORT: "8000"

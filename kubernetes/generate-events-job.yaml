@@ -1,0 +1,117 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: generate-test-events
+  namespace: xdr-platform
+spec:
+  template:
+    spec:
+      containers:
+      - name: event-generator
+        image: docker.io/golang:1.21-alpine
+        command:
+        - /bin/sh
+        - -c
+        - |
+          apk add --no-cache git
+          cat > /tmp/generate.go << 'EOF'
+          package main
+
+          import (
+          	"database/sql"
+          	"fmt"
+          	"log"
+          	"math/rand"
+          	"time"
+
+          	"github.com/lib/pq"
+          	_ "github.com/lib/pq"
+          )
+
+          var (
+          	eventTypes = []string{"system", "network", "process", "file"}
+          	severities = []string{"low", "medium", "high", "critical"}
+          	hostnames  = []string{"web-server-01", "db-server-01", "app-server-01", "worker-01", "worker-02"}
+          	processes  = []string{"nginx", "postgres", "node", "python", "redis-server", "dockerd"}
+          	usernames  = []string{"root", "www-data", "postgres", "admin", "jenkins"}
+          	tags       = []string{"production", "security", "performance", "monitoring", "backup"}
+          )
+
+          func main() {
+          	connStr := "host=timescaledb-service port=5432 user=xdr_admin password=xdr_secure_password_2024 dbname=xdr_events sslmode=disable"
+          	db, err := sql.Open("postgres", connStr)
+          	if err != nil {
+          		log.Fatal(err)
+          	}
+          	defer db.Close()
+
+          	if err := db.Ping(); err != nil {
+          		log.Fatal("Cannot connect:", err)
+          	}
+
+          	fmt.Println("✅ Connecté à TimescaleDB")
+          	fmt.Println("🔄 Génération de 500 événements...")
+
+          	rand.Seed(time.Now().UnixNano())
+
+          	for i := 0; i < 500; i++ {
+          		hoursAgo := rand.Intn(24)
+          		minutesAgo := rand.Intn(60)
+          		timestamp := time.Now().Add(-time.Duration(hoursAgo)*time.Hour - time.Duration(minutesAgo)*time.Minute)
+
+          		eventType := eventTypes[rand.Intn(len(eventTypes))]
+          		severity := severities[rand.Intn(len(severities))]
+          		hostname := hostnames[rand.Intn(len(hostnames))]
+          		agentID := fmt.Sprintf("agent-%s", hostname)
+          		processName := processes[rand.Intn(len(processes))]
+          		processPID := rand.Intn(65535) + 1
+          		username := usernames[rand.Intn(len(usernames))]
+          		
+          		numTags := rand.Intn(3) + 1
+          		eventTags := make([]string, numTags)
+          		for j := 0; j < numTags; j++ {
+          			eventTags[j] = tags[rand.Intn(len(tags))]
+          		}
+
+          		sourceIP := fmt.Sprintf("10.0.%d.%d", rand.Intn(255), rand.Intn(255))
+          		destIP := fmt.Sprintf("172.16.%d.%d", rand.Intn(255), rand.Intn(255))
+          		rawData := fmt.Sprintf("Event %d: %s on %s by %s", i+1, eventType, hostname, username)
+
+          		query := `
+          			INSERT INTO raw_events (
+          				timestamp, event_type, severity, hostname, agent_id,
+          				source_ip, destination_ip, process_name, process_pid,
+          				username, tags, raw_data
+          			) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+          		`
+
+          		_, err := db.Exec(query,
+          			timestamp, eventType, severity, hostname, agentID,
+          			sourceIP, destIP, processName, processPID,
+          			username, pq.Array(eventTags), rawData,
+          		)
+
+          		if err != nil {
+          			log.Printf("❌ Erreur %d: %v", i+1, err)
+          			continue
+          		}
+
+          		if (i+1)%100 == 0 {
+          			fmt.Printf("✅ %d événements\n", i+1)
+          		}
+          	}
+
+          	fmt.Println("🎉 Terminé ! 500 événements générés")
+          	
+          	var count int
+          	db.QueryRow("SELECT COUNT(*) FROM raw_events").Scan(&count)
+          	fmt.Printf("📊 Total: %d événements\n", count)
+          }
+          EOF
+          
+          cd /tmp
+          go mod init generate
+          go get github.com/lib/pq
+          go run generate.go
+      restartPolicy: Never
+  backoffLimit: 1

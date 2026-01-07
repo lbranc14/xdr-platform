@@ -1,0 +1,40 @@
+# Fichiers à ignorer lors du build Docker
+
+# Binaires
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Fichiers de test
+*_test.go
+*.test
+
+# Dépendances
+vendor/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Logs
+*.log
+
+# Environnement
+.env
+.env.local

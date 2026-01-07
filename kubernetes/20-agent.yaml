@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xdr-agent
+  namespace: xdr-platform
+  labels:
+    app: xdr-agent
+spec:
+  replicas: 2  # 2 agents pour la HA
+  selector:
+    matchLabels:
+      app: xdr-agent
+  template:
+    metadata:
+      labels:
+        app: xdr-agent
+    spec:
+      containers:
+      - name: agent
+        image: docker.io/lbranc14/xdr-agent:latest  # À remplacer
+        env:
+        - name: KAFKA_BROKERS
+          valueFrom:
+            configMapKeyRef:
+              name: xdr-config
+              key: KAFKA_BROKERS
+        - name: KAFKA_TOPIC
+          valueFrom:
+            configMapKeyRef:
+              name: xdr-config
+              key: KAFKA_TOPIC_RAW_EVENTS
+        - name: COLLECTION_INTERVAL
+          valueFrom:
+            configMapKeyRef:
+              name: xdr-config
+              key: COLLECTION_INTERVAL
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
